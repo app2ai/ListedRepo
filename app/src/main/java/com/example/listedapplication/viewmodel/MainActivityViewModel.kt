@@ -8,8 +8,9 @@ import com.example.listedapplication.model.DashboardDataModel
 import com.example.listedapplication.repo.DashboardRemoteApiRepository
 import com.example.listedapplication.service.ApiResponse
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MainActivityViewModel(
+class MainActivityViewModel @Inject constructor(
     private val repository: DashboardRemoteApiRepository
 ) : ViewModel() {
 

@@ -5,8 +5,9 @@ import com.example.listedapplication.service.ApiResponse
 import com.example.listedapplication.service.ApiService
 import com.example.listedapplication.utils.Constants.ACCESS_TOKEN
 import com.example.listedapplication.utils.Constants.PROXY_V1
+import javax.inject.Inject
 
-class DashboardRemoteApiRepository(
+class DashboardRemoteApiRepository @Inject constructor(
     private val service: ApiService
 ) {
     suspend fun apiInvoked() : ApiResponse{
