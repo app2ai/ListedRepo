@@ -7,4 +7,6 @@ object Constants {
     const val ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjU5MjcsImlhdCI6MTY3NDU1MDQ1MH0.dCkW0ox8t\n" +
         "bjJA2GgUx2UEwNlbTZ7Rr38PVFJevYcXFI"
 
+    const val PROXY_V1 = "/api/v1"
+
 }
