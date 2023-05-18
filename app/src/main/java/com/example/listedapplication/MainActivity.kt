@@ -1,10 +1,14 @@
 package com.example.listedapplication
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager.widget.ViewPager
 import com.example.listedapplication.databinding.ActivityMainBinding
+import com.example.listedapplication.ui.FragmentPagerAdapter
+import com.example.listedapplication.ui.RecentLinksFragment
+import com.example.listedapplication.ui.TopLinksFragment
 import com.example.listedapplication.viewmodel.MainActivityViewModel
 import javax.inject.Inject
 
@@ -26,6 +30,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setupViewPager(binding.pager)
+        binding.tabLayout.setupWithViewPager(binding.pager)
+
         viewModel.callDashboardRemotely()
         observeData()
     }
@@ -46,5 +53,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun setupViewPager(viewPager: ViewPager) {
+        val adapter = FragmentPagerAdapter(supportFragmentManager)
+        adapter.addFragment(TopLinksFragment(), getString(R.string.txt_top_links))
+        adapter.addFragment(RecentLinksFragment(), getString(R.string.txt_rec_links))
+        viewPager.adapter = adapter
     }
 }

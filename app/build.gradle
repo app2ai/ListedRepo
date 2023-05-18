@@ -3,6 +3,7 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-android'
     id 'kotlin-kapt'
+    id 'org.jetbrains.kotlin.kapt'
 }
 
 android {
@@ -67,4 +68,7 @@ dependencies {
     // Dagger DI
     implementation 'com.google.dagger:dagger:2.42'
     kapt 'com.google.dagger:dagger-compiler:2.42'
+
+    // Graph Lib
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }

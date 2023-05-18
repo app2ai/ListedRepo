@@ -12,4 +12,8 @@
     <color name="sheet_bg">#F5F5F5</color>
     <color name="faint_text">#999CA0</color>
     <color name="original_text">#000000</color>
+    <color name="hyperlink_text">#0E6FFF</color>
+    <color name="transparent">#00000000</color>
+    <color name="whatsapp_bg">#414AD15F</color>
+    <color name="faq_bg">#E8F1FF</color>
 </resources>

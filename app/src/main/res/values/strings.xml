@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Listed Application</string>
     <string name="txt_dashboard">Dashboard</string>
+    <string name="txt_gm">Good morning</string>
+    <string name="txt_dummy_name">James Anderson</string>
     <string name="txt_overview">Overview</string>
     <string name="txt_view_analysis">View Analytics</string>
     <string name="txt_top_links">Top Links</string>
@@ -8,4 +10,10 @@
     <string name="txt_view_all_links">View all Links</string>
     <string name="txt_talk">Talk with us</string>
     <string name="txt_faq">Frequently Asked Questions</string>
+    <string name="clicks">Clicks</string>
+    <string name="today_s_clicks">Today\'s clicks</string>
+    <string name="txt_top_loc">Top Location</string>
+    <string name="top_src">Top source</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

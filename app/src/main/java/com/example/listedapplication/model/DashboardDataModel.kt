@@ -22,8 +22,8 @@ data class DashboardDataModel(
 
 data class Data(
     val overall_url_chart: OverallUrlChart,
-    val recent_links: List<RecentLink>,
-    val top_links: List<TopLink>
+    val recent_links: List<LinkDetails>,
+    val top_links: List<LinkDetails>
 )
 
 data class OverallUrlChart(
@@ -61,23 +61,7 @@ data class OverallUrlChart(
     val `2023-05-18`: Int
 )
 
-data class TopLink(
-    val app: String,
-    val created_at: String,
-    val domain_id: String,
-    val original_image: String,
-    val smart_link: String,
-    val thumbnail: Any,
-    val times_ago: String,
-    val title: String,
-    val total_clicks: Int,
-    val url_id: Int,
-    val url_prefix: String,
-    val url_suffix: String,
-    val web_link: String
-)
-
-data class RecentLink(
+data class LinkDetails(
     val app: String,
     val created_at: String,
     val domain_id: String,
