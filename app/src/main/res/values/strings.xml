@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Listed Application</string>
+    <string name="txt_dashboard">Dashboard</string>
+    <string name="txt_overview">Overview</string>
+    <string name="txt_view_analysis">View Analytics</string>
+    <string name="txt_top_links">Top Links</string>
+    <string name="txt_rec_links">Recent Links</string>
+    <string name="txt_view_all_links">View all Links</string>
+    <string name="txt_talk">Talk with us</string>
+    <string name="txt_faq">Frequently Asked Questions</string>
 </resources>

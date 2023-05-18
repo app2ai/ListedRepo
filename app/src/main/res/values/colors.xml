@@ -7,4 +7,9 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="toolbar_color">#0E6FFF</color>
+    <color name="sheet_bg">#F5F5F5</color>
+    <color name="faint_text">#999CA0</color>
+    <color name="original_text">#000000</color>
 </resources>
