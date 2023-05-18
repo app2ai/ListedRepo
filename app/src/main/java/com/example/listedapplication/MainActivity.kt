@@ -9,11 +9,15 @@ import com.example.listedapplication.databinding.ActivityMainBinding
 import com.example.listedapplication.ui.FragmentPagerAdapter
 import com.example.listedapplication.ui.RecentLinksFragment
 import com.example.listedapplication.ui.TopLinksFragment
+import com.example.listedapplication.utils.FetchLinksFromRemoteListener
+import com.example.listedapplication.utils.FetchRecLinksFromRemoteListener
 import com.example.listedapplication.viewmodel.MainActivityViewModel
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
+    private lateinit var listener: FetchLinksFromRemoteListener
+    private lateinit var recListener: FetchRecLinksFromRemoteListener
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -30,11 +34,25 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupViewPager(binding.pager)
-        binding.tabLayout.setupWithViewPager(binding.pager)
-
         viewModel.callDashboardRemotely()
         observeData()
+
+        setupViewPager(binding.pager)
+        binding.tabLayout.setupWithViewPager(binding.pager)
+    }
+
+    // This method is responsible for getting object of listener
+    fun passInterface(listener: FetchLinksFromRemoteListener) {
+        this.listener = listener
+    }
+
+    fun passRecInterface(listener: FetchRecLinksFromRemoteListener) {
+        recListener = listener
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.checkForGreeting()
     }
 
     private fun observeData() {
@@ -52,6 +70,17 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+
+        viewModel.greeting.observe(this) {
+            binding.greetingTxt.text = it
+        }
+        viewModel.data.observe(this) {
+            binding.todaysClick.text = if (it.today_clicks == 0) "No clicks" else it.today_clicks.toString()
+            binding.location.text = it.top_location.ifEmpty { "NA" }
+            binding.socialMedia.text = it.top_source.ifEmpty { "NA" }
+            listener.onLinksFetched(it.mData.top_links)
+            recListener.onRecLinksFetched(it.mData.recent_links)
         }
     }
 

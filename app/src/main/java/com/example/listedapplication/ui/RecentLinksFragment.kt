@@ -5,17 +5,37 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.listedapplication.R
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.listedapplication.MainActivity
 import com.example.listedapplication.databinding.FragmentRecentLinksBinding
+import com.example.listedapplication.model.LinkDetails
+import com.example.listedapplication.utils.FetchRecLinksFromRemoteListener
 
 class RecentLinksFragment : Fragment() {
 
     private lateinit var binding: FragmentRecentLinksBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
+        savedInstanceState: Bundle?): View {
         binding = FragmentRecentLinksBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        (activity as MainActivity).passRecInterface(object : FetchRecLinksFromRemoteListener {
+            override fun onRecLinksFetched(list: List<LinkDetails>) {
+                setupRecyclerView(list)
+            }
+        })
+    }
+
+    private fun setupRecyclerView(data: List<LinkDetails>) {
+        binding.recyclerRecentLinks.apply {
+            layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            adapter = LinksAdapter(data)
+        }
     }
 }
