@@ -13,8 +13,7 @@ class DashboardRemoteApiRepository @Inject constructor(
     suspend fun apiInvoked() : ApiResponse{
         return try {
             service.dashboardApi(
-                PROXY_V1,
-                ACCESS_TOKEN
+                PROXY_V1
             ).body()?.let {
                 ApiResponse.Success(it)
             } ?: ApiResponse.Error
