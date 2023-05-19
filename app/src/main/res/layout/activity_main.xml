@@ -71,16 +71,38 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/greetingTxt" />
 
-            <com.github.mikephil.charting.charts.LineChart
-                android:id="@+id/lineChart"
+            <LinearLayout
+                android:id="@+id/lineChartLay"
                 android:layout_width="match_parent"
-                android:layout_height="210dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="16dp"
+                android:background="@color/white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/userName"/>
+                app:layout_constraintTop_toBottomOf="@id/userName"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/dateToAndFrom"
+                    android:background="@drawable/back_tab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/original_text"
+                    android:textSize="@dimen/small_text_size"
+                    android:drawableEnd="@drawable/clock"
+                    android:drawablePadding="4dp"
+                    android:layout_gravity="end"
+                    android:padding="4dp"
+                    android:gravity="end"
+                    android:layout_marginBottom="4dp"
+                    />
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/lineChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="210dp"
+                    />
+            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/layCards"
@@ -91,7 +113,7 @@
                 android:weightSum="3"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lineChart">
+                app:layout_constraintTop_toBottomOf="@id/lineChartLay">
 
                 <androidx.cardview.widget.CardView
                     android:layout_width="120dp"

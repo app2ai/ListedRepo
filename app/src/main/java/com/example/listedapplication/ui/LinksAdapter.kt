@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.listedapplication.R
 import com.example.listedapplication.databinding.LinkCardBinding
 import com.example.listedapplication.model.LinkDetails
+import com.example.listedapplication.utils.DateUtils
 import com.squareup.picasso.Picasso
 
 class LinksAdapter(private val links: List<LinkDetails>) : Adapter<LinksAdapter.LinksViewHolder>() {
@@ -32,7 +33,7 @@ class LinksAdapter(private val links: List<LinkDetails>) : Adapter<LinksAdapter.
     inner class LinksViewHolder(private val bind: LinkCardBinding): ViewHolder(bind.root) {
         fun bindItem(model: LinkDetails) {
             bind.linkName.text = model.title
-            bind.linkDate.text = model.created_at
+            bind.linkDate.text = getFormatDate(model.created_at)
             bind.clickCountTxt.text = model.total_clicks.toString()
             bind.link.text = model.web_link
             Log.d("WEB", "Secure domain: ${model.web_link}")
@@ -42,6 +43,10 @@ class LinksAdapter(private val links: List<LinkDetails>) : Adapter<LinksAdapter.
                 .placeholder(R.drawable.loading)
                 .error(R.drawable.loading_fail)
                 .into(bind.imgLogo)
+        }
+
+        private fun getFormatDate(d: String) : String{
+            return DateUtils.dateFormatConversion(d)
         }
     }
 }

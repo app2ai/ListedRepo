@@ -13,6 +13,7 @@ import com.example.listedapplication.databinding.ActivityMainBinding
 import com.example.listedapplication.ui.FragmentPagerAdapter
 import com.example.listedapplication.ui.RecentLinksFragment
 import com.example.listedapplication.ui.TopLinksFragment
+import com.example.listedapplication.utils.DateUtils
 import com.example.listedapplication.utils.FetchLinksFromRemoteListener
 import com.example.listedapplication.utils.FetchRecLinksFromRemoteListener
 import com.example.listedapplication.utils.greatestValue
@@ -112,7 +113,9 @@ class MainActivity : AppCompatActivity(), OnChartValueSelectedListener {
     }
 
     private fun setData(count: Int, top: Int, arr: Map<String, Int>) {
-
+        val fDate = DateUtils.dateFormatForSameYear(arr.entries.first().key)
+        val lDate = DateUtils.dateFormatForSameYear(arr.entries.last().key)
+        binding.dateToAndFrom.text = "$fDate - $lDate"
         chart = binding.lineChart
 
         chart.setBackgroundColor(getColor(R.color.white))
@@ -149,12 +152,12 @@ class MainActivity : AppCompatActivity(), OnChartValueSelectedListener {
         }
 
         // create a dataset and give it a type
-        val set1 = LineDataSet(values, getString(R.string.txt_overview))
+        val set1 = LineDataSet(values, getString(R.string.txt_overview)) // This will show first to last date on chart
 
         set1.color = getColor(R.color.toolbar_color)
 
         // customize legend entry
-        set1.formLineWidth = 2f
+        set1.formLineWidth = 4f
         set1.formSize = 15f
 
         // text size of values
