@@ -1,12 +1,12 @@
 package com.example.listedapplication
 
-import android.graphics.DashPathEffect
-import android.graphics.drawable.Drawable
-import android.icu.text.DecimalFormat
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import com.example.listedapplication.databinding.ActivityMainBinding
@@ -26,10 +26,8 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IFillFormatter
 import com.github.mikephil.charting.highlight.Highlight
-import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
-import com.github.mikephil.charting.utils.Utils
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), OnChartValueSelectedListener {
@@ -37,6 +35,7 @@ class MainActivity : AppCompatActivity(), OnChartValueSelectedListener {
     private lateinit var listener: FetchLinksFromRemoteListener
     private lateinit var recListener: FetchRecLinksFromRemoteListener
     private lateinit var chart: LineChart
+    private lateinit var whatsappNumber: String
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -58,6 +57,32 @@ class MainActivity : AppCompatActivity(), OnChartValueSelectedListener {
 
         setupViewPager(binding.pager)
         binding.tabLayout.setupWithViewPager(binding.pager)
+
+        binding.whatsappCard.setOnClickListener {
+            gotoWhatsapp()
+        }
+    }
+
+    private fun gotoWhatsapp() {
+        if (whatsappNumber.isNotEmpty()) {
+            val url = getString(R.string.whatsapp_string, whatsappNumber)
+            try {
+                val pm: PackageManager = this.packageManager
+                pm.getPackageInfo("com.whatsapp", PackageManager.GET_ACTIVITIES)
+                val i = Intent(Intent.ACTION_VIEW)
+                i.data = Uri.parse(url)
+                this.startActivity(i)
+            } catch (e: PackageManager.NameNotFoundException) {
+                Toast.makeText(
+                    this,
+                    "Whatsapp app not installed in your phone",
+                    Toast.LENGTH_LONG
+                ).show()
+                e.printStackTrace()
+            }
+        } else {
+            Toast.makeText(this, "Number not found", Toast.LENGTH_LONG).show()
+        }
     }
 
     // This method is responsible for getting object of listener
@@ -103,6 +128,7 @@ class MainActivity : AppCompatActivity(), OnChartValueSelectedListener {
             listener.onLinksFetched(it.mData.top_links)
             recListener.onRecLinksFetched(it.mData.recent_links)
             setDataToChart(it.mData.overall_url_chart)
+            whatsappNumber = it.support_whatsapp_number
         }
     }
 
