@@ -1,6 +1,5 @@
 package com.example.listedapplication.service
 
-import android.util.Log
 import com.example.listedapplication.model.DashboardDataModel
 
 /*

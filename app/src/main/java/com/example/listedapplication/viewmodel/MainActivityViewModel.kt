@@ -1,13 +1,10 @@
 package com.example.listedapplication.viewmodel
 
-import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.listedapplication.model.DashboardDataModel
-import com.example.listedapplication.model.LinkDetails
 import com.example.listedapplication.repo.DashboardRemoteApiRepository
 import com.example.listedapplication.service.ApiResponse
 import kotlinx.coroutines.launch
