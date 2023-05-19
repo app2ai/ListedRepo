@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -106,14 +107,15 @@ class MainActivity : AppCompatActivity(), OnChartValueSelectedListener {
             it?.let {
                 when (it) {
                     MainActivityViewModel.DashFailed -> {
-                        Toast.makeText(this, "API failed to load data", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "API failed to load data", Toast.LENGTH_SHORT).show()
+                        switchProgressBar(false)
                     }
                     MainActivityViewModel.DashInProgress -> {
-                        Toast.makeText(this, "Please, wait while data loaded", Toast.LENGTH_LONG)
-                            .show()
+                        switchProgressBar(true)
                     }
                     is MainActivityViewModel.DashSuccess -> {
-                        Toast.makeText(this, "API successfully called", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "API successfully called", Toast.LENGTH_SHORT).show()
+                        switchProgressBar(false)
                     }
                 }
             }
@@ -224,5 +226,13 @@ class MainActivity : AppCompatActivity(), OnChartValueSelectedListener {
     }
 
     override fun onNothingSelected() {
+    }
+
+    private fun switchProgressBar(isActive: Boolean) {
+        if (isActive) {
+            binding.progressCircular.visibility = View.VISIBLE
+        } else {
+            binding.progressCircular.visibility = View.GONE
+        }
     }
 }
