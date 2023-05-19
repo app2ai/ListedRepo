@@ -3,10 +3,13 @@ package com.example.listedapplication.ui
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context.CLIPBOARD_SERVICE
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView.Adapter
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.listedapplication.R
@@ -52,6 +55,10 @@ class LinksAdapter(private val links: List<LinkDetails>) : Adapter<LinksAdapter.
                 val clip: ClipData = ClipData.newPlainText("URL", links[adapterPosition].web_link)
                 clipboard.setPrimaryClip(clip)
                 Toast.makeText(bind.root.context, "URL copied: ${clipboard.primaryClip?.getItemAt(0)?.text}", Toast.LENGTH_SHORT).show()
+            }
+            bind.link.setOnClickListener {
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(links[adapterPosition].web_link))
+                startActivity(bind.root.context, browserIntent, null)
             }
         }
 
