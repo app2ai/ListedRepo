@@ -182,7 +182,7 @@
                             android:layout_marginStart="12dp"
                             android:layout_marginTop="6dp"
                             android:lines="1"
-                            android:text="Pune"
+                            android:text="---"
                             android:textColor="@color/original_text"
                             android:textSize="@dimen/large_text_size"
                             android:textStyle="bold" />
@@ -223,7 +223,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="12dp"
                             android:layout_marginTop="6dp"
-                            android:text="Instagram"
+                            android:text="---"
                             android:textColor="@color/original_text"
                             android:textSize="@dimen/large_text_size"
                             android:textStyle="bold" />

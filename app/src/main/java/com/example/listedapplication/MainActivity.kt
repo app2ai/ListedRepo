@@ -61,6 +61,9 @@ class MainActivity : AppCompatActivity(), OnChartValueSelectedListener {
         binding.whatsappCard.setOnClickListener {
             gotoWhatsapp()
         }
+        binding.faqCard.setOnClickListener {
+            Toast.makeText(this, "Feature not implemented yet...", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun gotoWhatsapp() {
@@ -153,7 +156,7 @@ class MainActivity : AppCompatActivity(), OnChartValueSelectedListener {
         // enable scaling and dragging
         chart.isDragEnabled = true
         chart.setScaleEnabled(true)
-
+        chart.zoom(2.8f, 0f, 1f, 1f)
         // get the legend (only possible after setting data)
         val l = chart.legend
         // draw legend entries as lines
