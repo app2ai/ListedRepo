@@ -1,8 +1,12 @@
 package com.example.listedapplication
 
+import android.graphics.DashPathEffect
+import android.graphics.drawable.Drawable
+import android.icu.text.DecimalFormat
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import com.example.listedapplication.databinding.ActivityMainBinding
@@ -11,13 +15,27 @@ import com.example.listedapplication.ui.RecentLinksFragment
 import com.example.listedapplication.ui.TopLinksFragment
 import com.example.listedapplication.utils.FetchLinksFromRemoteListener
 import com.example.listedapplication.utils.FetchRecLinksFromRemoteListener
+import com.example.listedapplication.utils.greatestValue
 import com.example.listedapplication.viewmodel.MainActivityViewModel
+import com.github.mikephil.charting.charts.LineChart
+import com.github.mikephil.charting.components.Legend.LegendForm
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
+import com.github.mikephil.charting.formatter.IFillFormatter
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.interfaces.dataprovider.LineDataProvider
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import com.github.mikephil.charting.utils.Utils
 import javax.inject.Inject
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnChartValueSelectedListener {
     lateinit var binding: ActivityMainBinding
     private lateinit var listener: FetchLinksFromRemoteListener
     private lateinit var recListener: FetchRecLinksFromRemoteListener
+    private lateinit var chart: LineChart
 
     @Inject
     lateinit var viewModelFactory: ViewModelProvider.Factory
@@ -58,12 +76,13 @@ class MainActivity : AppCompatActivity() {
     private fun observeData() {
         viewModel.resLiveData.observe(this) {
             it?.let {
-                when(it) {
+                when (it) {
                     MainActivityViewModel.DashFailed -> {
                         Toast.makeText(this, "API failed to load data", Toast.LENGTH_LONG).show()
                     }
                     MainActivityViewModel.DashInProgress -> {
-                        Toast.makeText(this, "Please, wait while data loaded", Toast.LENGTH_LONG).show()
+                        Toast.makeText(this, "Please, wait while data loaded", Toast.LENGTH_LONG)
+                            .show()
                     }
                     is MainActivityViewModel.DashSuccess -> {
                         Toast.makeText(this, "API successfully called", Toast.LENGTH_LONG).show()
@@ -76,12 +95,91 @@ class MainActivity : AppCompatActivity() {
             binding.greetingTxt.text = it
         }
         viewModel.data.observe(this) {
-            binding.todaysClick.text = if (it.today_clicks == 0) "No clicks" else it.today_clicks.toString()
+            binding.todaysClick.text =
+                if (it.today_clicks == 0) "No clicks" else it.today_clicks.toString()
             binding.location.text = it.top_location.ifEmpty { "NA" }
             binding.socialMedia.text = it.top_source.ifEmpty { "NA" }
             listener.onLinksFetched(it.mData.top_links)
             recListener.onRecLinksFetched(it.mData.recent_links)
+            setDataToChart(it.mData.overall_url_chart)
         }
+    }
+
+    private fun setDataToChart(overallUrlChart: Map<String, Int>) {
+        val count = overallUrlChart.size
+        val topValue = overallUrlChart.greatestValue()
+        setData(count, topValue, overallUrlChart)
+    }
+
+    private fun setData(count: Int, top: Int, arr: Map<String, Int>) {
+
+        chart = binding.lineChart
+
+        chart.setBackgroundColor(getColor(R.color.white))
+        chart.description.isEnabled = false
+        chart.setTouchEnabled(true)
+
+        // set listeners
+        chart.setOnChartValueSelectedListener(this)
+        // enable scaling and dragging
+        chart.isDragEnabled = true
+        chart.setScaleEnabled(true)
+
+        // get the legend (only possible after setting data)
+        val l = chart.legend
+        // draw legend entries as lines
+        l.form = LegendForm.EMPTY
+
+        val xAxis = chart.xAxis
+        xAxis.axisLineColor = getColor(R.color.toolbar_color)
+        xAxis.labelRotationAngle = 90f
+        xAxis.position = XAxis.XAxisPosition.BOTTOM
+        val yAxis = chart.axisLeft
+        chart.axisRight.isEnabled = false
+
+        // axis range
+        yAxis.axisMaximum = top.toFloat()
+        yAxis.axisMinimum = 0f
+
+        val values: ArrayList<Entry> = ArrayList()
+        var occ = 0f
+        for (i in arr.values) {
+            occ += 1
+            values.add(Entry(occ, i.toFloat()))
+        }
+
+        // create a dataset and give it a type
+        val set1 = LineDataSet(values, getString(R.string.txt_overview))
+
+        set1.color = getColor(R.color.toolbar_color)
+
+        // customize legend entry
+        set1.formLineWidth = 2f
+        set1.formSize = 15f
+
+        // text size of values
+        set1.valueTextSize = 9f
+
+        // draw selection line as dashed
+        set1.enableDashedHighlightLine(10f, 5f, 0f)
+
+        // set the filled area
+        set1.setDrawFilled(true)
+        set1.fillFormatter = IFillFormatter { dataSet, dataProvider ->
+            chart.axisLeft.axisMinimum
+        }
+
+        val drawable = getDrawable(R.drawable.fade_blue)
+        set1.fillDrawable = drawable
+
+        var dataSets = ArrayList<ILineDataSet>()
+        dataSets.add(set1) // add the data sets
+
+        // create a data object with the data sets
+        val data = LineData(dataSets)
+
+        // set data
+        chart.data = data
     }
 
     private fun setupViewPager(viewPager: ViewPager) {
@@ -89,5 +187,11 @@ class MainActivity : AppCompatActivity() {
         adapter.addFragment(TopLinksFragment(), getString(R.string.txt_top_links))
         adapter.addFragment(RecentLinksFragment(), getString(R.string.txt_rec_links))
         viewPager.adapter = adapter
+    }
+
+    override fun onValueSelected(e: Entry?, h: Highlight?) {
+    }
+
+    override fun onNothingSelected() {
     }
 }

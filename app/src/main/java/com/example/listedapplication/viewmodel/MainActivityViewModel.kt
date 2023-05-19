@@ -1,5 +1,6 @@
 package com.example.listedapplication.viewmodel
 
+import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
