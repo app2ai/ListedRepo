@@ -1,12 +1,12 @@
 package com.example.listedapplication.viewmodel
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.listedapplication.model.DashboardDataModel
 import com.example.listedapplication.repo.DashboardRemoteApiRepository
 import com.example.listedapplication.service.ApiResponse
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
@@ -15,24 +15,24 @@ class MainActivityViewModel @Inject constructor(
     private val repository: DashboardRemoteApiRepository
 ) : ViewModel() {
 
-    private var _resLiveData = MutableLiveData<DashboardData>()
-    val resLiveData: LiveData<DashboardData> = _resLiveData
+    private var _resLiveData = MutableSharedFlow<DashboardData>()
+    val resLiveData = _resLiveData.asSharedFlow()
 
-    private var _greeting = MutableLiveData<String>()
-    val greeting: LiveData<String> = _greeting
+    private var _greeting = MutableSharedFlow<String>()
+    val greeting = _greeting.asSharedFlow()
 
-    private var _data = MutableLiveData<DashboardDataModel>()
-    val data: LiveData<DashboardDataModel> = _data
+    private var _data = MutableSharedFlow<DashboardDataModel>()
+    val data = _data.asSharedFlow()
 
     fun callDashboardRemotely() {
         viewModelScope.launch {
-            _resLiveData.value = DashInProgress
+            _resLiveData.emit(DashInProgress)
             when(val res = repository.apiInvoked()) {
                 ApiResponse.Error -> {
-                    _resLiveData.value = DashFailed
+                    _resLiveData.emit(DashFailed)
                 }
                 is ApiResponse.Success -> {
-                    _resLiveData.value = DashSuccess
+                    _resLiveData.emit(DashSuccess)
                     sendDataForMagic(res.data)
                 }
             }
@@ -40,20 +40,24 @@ class MainActivityViewModel @Inject constructor(
     }
 
     private fun sendDataForMagic(data: DashboardDataModel) {
-        _data.value = data
+        viewModelScope.launch {
+            _data.emit(data)
+        }
     }
 
     fun checkForGreeting() {
-        val c: Calendar = Calendar.getInstance()
-        when (c.get(Calendar.HOUR_OF_DAY)) {
-            in 0..11 -> {
-                _greeting.value = "Good Morning"
-            }
-            in 12..15 -> {
-                _greeting.value = "Good Afternoon"
-            }
-            else -> {
-                _greeting.value = "Good Evening"
+        viewModelScope.launch {
+            val c: Calendar = Calendar.getInstance()
+            when (c.get(Calendar.HOUR_OF_DAY)) {
+                in 0..11 -> {
+                    _greeting.emit("Good Morning")
+                }
+                in 12..15 -> {
+                    _greeting.emit("Good Afternoon")
+                }
+                else -> {
+                    _greeting.emit("Good Evening")
+                }
             }
         }
     }

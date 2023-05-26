@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.viewpager.widget.ViewPager
 import com.example.listedapplication.databinding.ActivityMainBinding
 import com.example.listedapplication.ui.FragmentPagerAdapter
@@ -28,6 +29,7 @@ import com.github.mikephil.charting.formatter.IFillFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), OnChartValueSelectedListener {
@@ -103,36 +105,41 @@ class MainActivity : AppCompatActivity(), OnChartValueSelectedListener {
     }
 
     private fun observeData() {
-        viewModel.resLiveData.observe(this) {
-            it?.let {
-                when (it) {
-                    MainActivityViewModel.DashFailed -> {
-                        Toast.makeText(this, "API failed to load data", Toast.LENGTH_SHORT).show()
-                        switchProgressBar(false)
-                    }
-                    MainActivityViewModel.DashInProgress -> {
-                        switchProgressBar(true)
-                    }
-                    is MainActivityViewModel.DashSuccess -> {
-                        Toast.makeText(this, "API successfully called", Toast.LENGTH_SHORT).show()
-                        switchProgressBar(false)
+        lifecycleScope.launch {
+            viewModel.greeting.collect{
+                binding.greetingTxt.text = it
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.data.collect{
+                binding.todaysClick.text =
+                    if (it.today_clicks == 0) "No clicks" else it.today_clicks.toString()
+                binding.location.text = it.top_location.ifEmpty { "NA" }
+                binding.socialMedia.text = it.top_source.ifEmpty { "NA" }
+                listener.onLinksFetched(it.mData.top_links)
+                recListener.onRecLinksFetched(it.mData.recent_links)
+                setDataToChart(it.mData.overall_url_chart)
+                whatsappNumber = it.support_whatsapp_number
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.resLiveData.collect{
+                it.let {
+                    when (it) {
+                        MainActivityViewModel.DashFailed -> {
+                            Toast.makeText(this@MainActivity, "API failed to load data", Toast.LENGTH_SHORT).show()
+                            switchProgressBar(false)
+                        }
+                        MainActivityViewModel.DashInProgress -> {
+                            switchProgressBar(true)
+                        }
+                        is MainActivityViewModel.DashSuccess -> {
+                            Toast.makeText(this@MainActivity, "API successfully called", Toast.LENGTH_SHORT).show()
+                            switchProgressBar(false)
+                        }
                     }
                 }
             }
-        }
-
-        viewModel.greeting.observe(this) {
-            binding.greetingTxt.text = it
-        }
-        viewModel.data.observe(this) {
-            binding.todaysClick.text =
-                if (it.today_clicks == 0) "No clicks" else it.today_clicks.toString()
-            binding.location.text = it.top_location.ifEmpty { "NA" }
-            binding.socialMedia.text = it.top_source.ifEmpty { "NA" }
-            listener.onLinksFetched(it.mData.top_links)
-            recListener.onRecLinksFetched(it.mData.recent_links)
-            setDataToChart(it.mData.overall_url_chart)
-            whatsappNumber = it.support_whatsapp_number
         }
     }
 
