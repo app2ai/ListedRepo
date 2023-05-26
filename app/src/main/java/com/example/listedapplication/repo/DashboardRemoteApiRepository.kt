@@ -2,7 +2,6 @@ package com.example.listedapplication.repo
 
 import com.example.listedapplication.service.ApiResponse
 import com.example.listedapplication.service.ApiService
-import com.example.listedapplication.utils.Constants.PROXY_V1
 import javax.inject.Inject
 
 class DashboardRemoteApiRepository @Inject constructor(
@@ -11,12 +10,16 @@ class DashboardRemoteApiRepository @Inject constructor(
     suspend fun apiInvoked() : ApiResponse{
         return try {
             service.dashboardApi(
-                PROXY_V1
+                proxyPath()
             ).body()?.let {
                 ApiResponse.Success(it)
             } ?: ApiResponse.Error
         } catch (ex: Exception) {
             ApiResponse.Error
         }
+    }
+
+    companion object{
+        external fun proxyPath(): String
     }
 }

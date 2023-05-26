@@ -1,12 +1,8 @@
 package com.example.listedapplication.di
 
-import android.content.Context
-import android.content.SharedPreferences
-import androidx.security.crypto.EncryptedSharedPreferences
-import androidx.security.crypto.MasterKeys
+import com.example.listedapplication.MyApplication.Companion.getBaseUrl
+import com.example.listedapplication.MyApplication.Companion.getToken
 import com.example.listedapplication.service.ApiService
-import com.example.listedapplication.utils.Constants
-import com.example.listedapplication.utils.Constants.TOKEN_KEY
 import dagger.Module
 import dagger.Provides
 import okhttp3.Interceptor
@@ -20,7 +16,7 @@ class NetworkModule {
     @Provides
     fun provideApiService(okHttpClient: OkHttpClient): ApiService {
         return Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
+            .baseUrl(provideBaseUrl())
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
@@ -36,23 +32,16 @@ class NetworkModule {
     }
 
     @Provides
-    fun provideTokenInterceptor(sharedPreferences: SharedPreferences) : Interceptor = Interceptor { chain ->
+    fun provideTokenInterceptor() : Interceptor = Interceptor { chain ->
         val request = chain.request().newBuilder()
-            .addHeader("Authorization", "Bearer ${sharedPreferences.getString(TOKEN_KEY, "")}")
+            .addHeader("Authorization", "Bearer ${provideToken()}")
             .build()
         chain.proceed(request)
     }
 
     @Provides
-    fun provideEncryptedSharedPreferences(context: Context) : SharedPreferences {
-        val e = EncryptedSharedPreferences.create(
-            "listed_pref",
-            MasterKeys.getOrCreate(MasterKeys.AES256_GCM_SPEC),
-            context,
-            EncryptedSharedPreferences.PrefKeyEncryptionScheme.AES256_SIV,
-            EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
-        )
-        e.edit().putString(TOKEN_KEY, "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MjU5MjcsImlhdCI6MTY3NDU1MDQ1MH0.dCkW0ox8tbjJA2GgUx2UEwNlbTZ7Rr38PVFJevYcXFI").apply()
-        return e
-    }
+    fun provideBaseUrl(): String = getBaseUrl()
+
+    @Provides
+    fun provideToken(): String = getToken()
 }
